@@ -11,257 +11,240 @@
 /* ************************************************************************** */
 
 #include "./includes/renderer.h"
+#include "libft/libft.h"
+#include "minilibx-linux/mlx.h"
 
 // GET DIM
-int	get_x_size(const char *s)
-{
-	int	i;
-	int	x;
+int get_x_size(const char *s) {
+	int i;
+	int x;
 
 	i = 0;
 	x = 0;
-	while (s[i] != '\0')
-	{
-		if (s[i] != '\0' && ft_isdigit(s[i]))
-		{
+	while (s[i] != '\0') {
+		if (s[i] != '\0' && ft_isdigit(s[i])) {
 			x++;
-			while (s[i + 1] != '\0' && s[i] != ' ')
-				i++;
+			while (s[i + 1] != '\0' && s[i] != ' ') i++;
 		}
 		i++;
 	}
 	return (x);
 }
 
-int	get_y_size(const char *s)
-{
-	int	i;
-	int	y;
+int get_y_size(const char *s) {
+	int i;
+	int y;
 
 	i = -1;
 	y = 1;
-	if (!s)
-		return (0);
+	if (!s) return (0);
 	while (s[++i] != '\0')
-		if (s[i + 1] != '\0' && s[i] == '\n')
-			y++;
+		if (s[i + 1] != '\0' && s[i] == '\n') y++;
 	return (y);
 }
 
 // FREE
-void	ft_free_matrix(char **vec)
-{
-	int	i;
+void ft_free_matrix(char **vec) {
+	int i;
 
 	i = -1;
-	while (vec[++i])
-		free(vec[i]);
+	while (vec[++i]) free(vec[i]);
 	free(vec);
 }
 
-void	ft_free_tensor(char ***z)
-{
-	int	i;
+void ft_free_tensor(char ***z) {
+	int i;
 
 	i = -1;
-	while (z[++i])
-	{
+	while (z[++i]) {
 		ft_free_matrix(z[i]);
 	}
 	free(z);
 }
 
 // GRAPH
-void	pixel_to_img(int x, int y, t_data *data, int color)
-{
-	char	*pixel;
+void pixel_to_img(int x, int y, t_data *data, int color) {
+	char *pixel;
 
-	if ((x <= 0 || x >= WINDX) || (y <= 0 || y >= WINDY))
-		return ;
+	if ((x <= 0 || x >= WINDX) || (y <= 0 || y >= WINDY)) return;
 	pixel = data->img->img_px + y * data->img->llen + x * (data->img->bpp / 8);
 	*(int *)pixel = color;
 }
 
-void	pixel_to_img_float(float_t x, float_t y, t_data *data, int color)
-{
-	char	*pixel;
+void pixel_to_img_float(float_t x, float_t y, t_data *data, int color) {
+	char *pixel;
 
-	if ((x < 0 || x >= WINDX) || (y < 0 || y >= WINDY))
-		return ;
-	pixel = data->img->img_px + (int)y * data->img->llen + (int)x * (data->img->bpp / 8);
+	if ((x < 0 || x >= WINDX) || (y < 0 || y >= WINDY)) return;
+	pixel = data->img->img_px + (int)y * data->img->llen +
+			(int)x * (data->img->bpp / 8);
 	*(int *)pixel = color;
 }
 
-void	water_mark(t_data *data)
-{
-	mlx_string_put(data->ini, data->win,
-		15, 15, 120000, "renders by gecarval");
-	mlx_string_put(data->ini, data->win,
-		15, 30, 120000, "Press 1 for Cube");
-	mlx_string_put(data->ini, data->win,
-		15, 45, 120000, "Press 2 for Fluid Sim");
+void water_mark(t_data *data) {
+	mlx_string_put(data->ini, data->win, 15, 15, 120000, "renders by gecarval");
+	mlx_string_put(data->ini, data->win, 15, 30, 120000, "Press 1 for Cube");
+	mlx_string_put(data->ini, data->win, 15, 45, 120000,
+				   "Press 2 for Fluid Sim");
 }
 
-void	controls_mark(t_data *data)
-{
-	mlx_string_put(data->ini, data->win, 15, 15, 0xFFFFFF, "'LMB'=Brush_On ; 'RMB'=Brush_Off");
-	mlx_string_put(data->ini, data->win, 15, 30, 0xFFFFFF, "','=Decrease_Brush ; '.'=Increase_Brush");
-	mlx_string_put(data->ini, data->win, 15, 45, 0xFFFFFF, "Q=Empty ; W=Sand ; E=WetSand ; R=Stone ; T=GunPowder ; Y=Soap ; U=Wood ; I=Iron ; O=Rust ; P=Glass");
-	mlx_string_put(data->ini, data->win, 15, 60, 0xFFFFFF, "A=Water ; S=Lava ; D=Oil ; F=Acid ; G=Fly");
-	mlx_string_put(data->ini, data->win, 15, 75, 0xFFFFFF, "Z=Fire ; X=Oxygen ; C=Hidrogen ; V=Propane ; B=Steam ; N=Missil");
+void controls_mark(t_data *data) {
+	mlx_string_put(data->ini, data->win, 15, 15, 0xFFFFFF,
+				   "'LMB'=Brush_On ; 'RMB'=Brush_Off");
+	mlx_string_put(data->ini, data->win, 15, 30, 0xFFFFFF,
+				   "','=Decrease_Brush ; '.'=Increase_Brush");
+	mlx_string_put(data->ini, data->win, 15, 45, 0xFFFFFF,
+				   "Q=Empty ; W=Sand ; E=WetSand ; R=Stone ; T=GunPowder ; "
+				   "Y=Soap ; U=Wood ; I=Iron ; O=Rust ; P=Glass");
+	mlx_string_put(data->ini, data->win, 15, 60, 0xFFFFFF,
+				   "A=Water ; S=Lava ; D=Oil ; F=Acid ; G=Fly");
+	mlx_string_put(
+		data->ini, data->win, 15, 75, 0xFFFFFF,
+		"Z=Fire ; X=Oxygen ; C=Hidrogen ; V=Propane ; B=Steam ; N=Missil");
 }
 
-void	render_background(t_data *data, int color)
-{
-	int	x;
-	int	y;
+void render_background(t_data *data, int color) {
+	int x;
+	int y;
 
 	x = -1;
-	while (++x < WINX)
-	{
+	while (++x < WINX) {
 		y = -1;
-		while (++y < WINY)
-			pixel_to_img(x, y, data, color);
+		while (++y < WINY) pixel_to_img(x, y, data, color);
 	}
 }
 
 // HOOKS
-int	mouse_released(int key, t_data *data)
-{
-	if (key == 1)
-		data->click_hold = 0;
+int mouse_released(int key, t_data *data) {
+	if (key == 1) data->click_hold = 0;
 	ft_printf("%d\n", key);
 	return (0);
 }
 
-int	mouse_click(int key, int x, int y, t_data *data)
-{
+int mouse_click(int key, int x, int y, t_data *data) {
 	(void)x;
 	(void)y;
-	if (key == 1)
-		data->click_hold = 1;
-	if (key == 3)
-		data->click_hold = 0;
+	if (key == 1) data->click_hold = 1;
+	if (key == 3) data->click_hold = 0;
 	return (0);
 }
 
-int	mlx_anim(t_data *data)
-{
-	int	time;
-	int	i;
+long		   plftime = 0;
+long		   lftime = 0;
+double_t	   ftime = 0;
+double_t	   seconds = 0;
+long		   frames = 0;
+struct timeval currtime;
 
-	if (data->anicub == 1)
-	{
+int mlx_anim(t_data *data) {
+	static char *str = NULL;
+	int			 time;
+	int			 i;
+
+	gettimeofday(&currtime, NULL);
+	plftime = lftime;
+	lftime = currtime.tv_usec;
+	if (data->anicub == 1) {
 		time = 100000000;
 		render_background(data, 0x000000);
 		draw_vertices(data, data->iso);
 		mlx_put_image_to_window(data->ini, data->win, data->img->img_ptr, 0, 0);
 		water_mark(data);
 		data->iso += data->anispeed;
-		if (data->iso > 6.28)
-			data->iso = 0.0;
+		if (data->iso > 6.28) data->iso = 0.0;
 		i = 0;
-		while (i < time)
-			i++;
+		while (i < time) i++;
 	}
-	if (data->anifsim == 1)
-	{
+	if (data->anifsim == 1) {
 		fluidsim_start(data);
 		mlx_put_image_to_window(data->ini, data->win, data->img->img_ptr, 0, 0);
 		controls_mark(data);
 		i = 0;
-		while (i < data->timing)
-			i++;
+		while (i < data->timing) i++;
 	}
-	if (data->click_hold == 1)
-	{
+	if (data->click_hold == 1) {
 		mlx_mouse_get_pos(data->ini, data->win, &data->mposx, &data->mposy);
 		put_mat(data->mposx / 2, data->mposy / 2, data);
-//		circle_putmat(data->mposx / 2, data->mposy / 2, data->brush_size, data);
+		// circle_putmat(data->mposx / 2, data->mposy / 2,
+		// data->brush_size, data);
 	}
+	if ((lftime - plftime) >= 0) ftime = (lftime - plftime) / 1000.0;
+	seconds += ftime;
+	frames++;
+	if (str != NULL) free(str);
+	str = ft_itoa(1000.0 / ftime);
+	if (seconds >= 1000.0) {
+		frames = 0;
+		seconds = 0;
+	}
+	if (str != NULL)
+		mlx_string_put(data->ini, data->win, (WINX), 20, 0xff0000, str);
 	return (0);
 }
 
-int	mlx_cooked(int key, t_data *data)
-{
-	if (key == 'q')
-		data->click_fill = MAT_ID_EMPTY;
-	if (key == 'w')
-		data->click_fill = MAT_ID_SAND;
-	if (key == 'e')
-		data->click_fill = MAT_ID_WETSAND;
-	if (key == 'r')
-		data->click_fill = MAT_ID_STONE;
-	if (key == 't')
-		data->click_fill = MAT_ID_GUNPOWDER;
-	if (key == 'y')
-		data->click_fill = MAT_ID_SOAP;
-	if (key == 'u')
-		data->click_fill = MAT_ID_WOOD;
-	if (key == 'i')
-		data->click_fill = MAT_ID_IRON;
-	if (key == 'o')
-		data->click_fill = MAT_ID_RUST;
-	if (key == 'p')
-		data->click_fill = MAT_ID_GLASS;
-	if (key == 'a')
-		data->click_fill = MAT_ID_WATER;
-	if (key == 's')
-		data->click_fill = MAT_ID_LAVA;
-	if (key == 'd')
-		data->click_fill = MAT_ID_OIL;
-	if (key == 'f')
-		data->click_fill = MAT_ID_ACID;
-	if (key == 'g')
-		data->click_fill = MAT_ID_FLY;
-	if (key == 'z')
-		data->click_fill = MAT_ID_FIRE;
-	if (key == 'x')
-		data->click_fill = MAT_ID_OXYGEN;
-	if (key == 'c')
-		data->click_fill = MAT_ID_HIDROGEN;
-	if (key == 'v')
-		data->click_fill = MAT_ID_PROPANE;
-	if (key == 'b')
-		data->click_fill = MAT_ID_STEAM;
-	if (key == 'n')
-		data->click_fill = MAT_ID_MISSILE;
-	if (key == ESC)
-		exit_data(data, 0);
-	if (key == '1')
-		data->anicub *= -1;
-	if (key == '2')
-	{
+void fill_setter(t_data *data, int setter) {
+	data->click_fill = setter;
+}
+
+static const t_lookup lookup[] = {
+	['a'] = (t_lookup){fill_setter, MAT_ID_WATER},
+	['b'] = (t_lookup){fill_setter, MAT_ID_STEAM},
+	['c'] = (t_lookup){fill_setter, MAT_ID_HIDROGEN},
+	['d'] = (t_lookup){fill_setter, MAT_ID_OIL},
+	['e'] = (t_lookup){fill_setter, MAT_ID_WETSAND},
+	['f'] = (t_lookup){fill_setter, MAT_ID_ACID},
+	['g'] = (t_lookup){fill_setter, MAT_ID_FLY},
+	['h'] = {NULL, 0},
+	['i'] = (t_lookup){fill_setter, MAT_ID_IRON},
+	['j'] = {NULL, 0},
+	['k'] = {NULL, 0},
+	['l'] = {NULL, 0},
+	['m'] = {NULL, 0},
+	['n'] = (t_lookup){fill_setter, MAT_ID_MISSILE},
+	['o'] = (t_lookup){fill_setter, MAT_ID_RUST},
+	['p'] = (t_lookup){fill_setter, MAT_ID_GLASS},
+	['q'] = (t_lookup){fill_setter, MAT_ID_EMPTY},
+	['r'] = (t_lookup){fill_setter, MAT_ID_STONE},
+	['s'] = (t_lookup){fill_setter, MAT_ID_LAVA},
+	['t'] = (t_lookup){fill_setter, MAT_ID_GUNPOWDER},
+	['u'] = (t_lookup){fill_setter, MAT_ID_WOOD},
+	['v'] = (t_lookup){fill_setter, MAT_ID_PROPANE},
+	['w'] = (t_lookup){fill_setter, MAT_ID_SAND},
+	['x'] = (t_lookup){fill_setter, MAT_ID_OXYGEN},
+	['y'] = (t_lookup){fill_setter, MAT_ID_SOAP},
+	['z'] = (t_lookup){fill_setter, MAT_ID_FIRE},
+};
+
+int mlx_cooked(int key, t_data *data) {
+	if (ft_isalpha(key) == 1) {
+		if (lookup[key].f != 0) {
+			lookup[key].f(data, lookup[key].param);
+		}
+	}
+	if (key == ESC) exit_data(data, 0);
+	if (key == '1') data->anicub *= -1;
+	if (key == '2') {
 		render_fluidmap(data);
 		data->anifsim *= -1;
 	}
-	if (key == '.')
-		data->brush_size += 1;
+	if (key == '.') data->brush_size += 1;
 	if (key == ',')
-		if (data->brush_size > 0)
-			data->brush_size -= 1;
-	if (key == ']')
-		data->timing += 10000000;
+		if (data->brush_size > 0) data->brush_size -= 1;
+	if (key == ']') data->timing += 10000000;
 	if (key == '[')
-		if (data->timing > 9999999)
-			data->timing -= 10000000;
-	if (key == ' ')
-	{
+		if (data->timing > 9999999) data->timing -= 10000000;
+	if (key == ' ') {
 		render_background(data, 0x000000);
 		mlx_put_image_to_window(data->ini, data->win, data->img->img_ptr, 0, 0);
 		water_mark(data);
 	}
-	if (key == 65362)
-		data->anispeed += 0.0025;
-	if (key == 65364)
-		data->anispeed -= 0.0025;
+	if (key == 65362) data->anispeed += 0.0025;
+	if (key == 65364) data->anispeed -= 0.0025;
 	return (0);
 }
 
 // DELTAS
-t_pt	*pt_dup(t_pt *a)
-{
-	t_pt	*b;
+t_pt *pt_dup(t_pt *a) {
+	t_pt *b;
 
 	b = (t_pt *)malloc(sizeof(t_pt));
 	b->x = a->x;
@@ -271,15 +254,13 @@ t_pt	*pt_dup(t_pt *a)
 	return (b);
 }
 
-void	defdel(t_delta *a, float_t ini, float_t fin)
-{
+void defdel(t_delta *a, float_t ini, float_t fin) {
 	a->ini = ini;
 	a->fin = fin;
 }
 
-t_delta	revdel(t_delta a)
-{
-	int	tmp;
+t_delta revdel(t_delta a) {
+	int tmp;
 
 	tmp = a.ini;
 	a.ini = a.fin;
@@ -288,17 +269,14 @@ t_delta	revdel(t_delta a)
 }
 
 // OTHERS
-void	print_matrix(char **vec)
-{
-	int	i;
-	int	j;
+void print_matrix(char **vec) {
+	int i;
+	int j;
 
 	i = -1;
-	while (vec[++i])
-	{
+	while (vec[++i]) {
 		j = -1;
-		while(vec[i][++j])
-			ft_printf("%c|", vec[i][j]);
+		while (vec[i][++j]) ft_printf("%c|", vec[i][j]);
 		ft_printf("\n");
 	}
 }

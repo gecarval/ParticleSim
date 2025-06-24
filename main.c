@@ -12,13 +12,11 @@
 
 #include "./includes/renderer.h"
 
-int	main(void)
-{
-	t_data	*data;
+int main(void) {
+	t_data *data;
 
 	data = (t_data *)malloc(sizeof(t_data));
-	if (!data)
-		display_error(data, "malloc error\n");
+	if (!data) display_error(data, "malloc error\n");
 	ft_init_program(data);
 	create_mapz(data);
 	create_fsim(data);
